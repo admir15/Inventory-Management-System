@@ -1,6 +1,6 @@
 # Inventory-Management-System
 # 1. Account Creation
-  . Sign Up
+  * Sign Up
    # Login
 # 2. Menu
    # Add Products
