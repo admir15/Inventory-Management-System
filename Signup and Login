@@ -1,0 +1,111 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+
+bool userExists(const string& username) {
+    ifstream file("users.txt");
+    if (!file.is_open()) {
+        cerr << "Error opening users file." << endl;
+        return false;
+    }
+
+    string storedUsername, storedPassword;
+    while (getline(file, storedUsername, ',') && getline(file, storedPassword)) {
+        if (storedUsername == username) {
+            file.close();
+            return true;
+        }
+    }
+    file.close();
+    return false;
+}
+
+
+void signup() {
+    ofstream file("users.txt", ios::app);
+    if (!file.is_open()) {
+        cerr << "Error opening users file." << endl;
+        return;
+    }
+
+    string username, password;
+
+    cout << "Enter a new username: ";
+    cin >> username;
+
+    while (userExists(username)) {
+        cout << "Username already exists. Please enter a different username: ";
+        cin >> username;
+    }
+
+    cout << "Enter a password: ";
+    cin >> password;
+
+    file << username << "," << password << endl;
+    file.close();
+
+
+    ofstream productsFile("products_" + username + ".txt");
+    ofstream customersFile("customers_" + username + ".txt");
+    ofstream ordersFile("orders_" + username + ".txt");
+
+    if (!productsFile.is_open() || !customersFile.is_open() || !ordersFile.is_open()) {
+        cerr << "Error creating user files." << endl;
+    } else {
+        cout << "Signup successful! You can now log in with your credentials." << endl;
+    }
+}
+
+
+string login() {
+    ifstream file("users.txt");
+    if (!file.is_open()) {
+        cerr << "Error opening users file." << endl;
+        return "";
+    }
+
+    string username, password, storedUsername, storedPassword;
+
+    cout << "Enter your username: ";
+    cin >> username;
+    cout << "Enter your password: ";
+    cin >> password;
+
+    while (getline(file, storedUsername, ',') && getline(file, storedPassword)) {
+        if (storedUsername == username && storedPassword == password) {
+            file.close();
+            return username;
+        }
+    }
+    file.close();
+    return "";
+}
+
+int main() {
+    int choice;
+    string loggedInUser;
+
+    cout << "1. Signup" << endl;
+    cout << "2. Login" << endl;
+    cout << "Enter your choice: ";
+    cin >> choice;
+
+    if (choice == 1) {
+        signup();
+    } else if (choice == 2) {
+        loggedInUser = login();
+        if (loggedInUser.empty()) {
+            cout << "Invalid username or password. Exiting program..." << endl;
+            return 0;
+        } else {
+            cout << "Login successful! Welcome, " << loggedInUser << "!" << endl;
+        }
+    } else {
+        cout << "Invalid choice. Exiting program..." << endl;
+        return 0;
+    }
+
+
+    return 0;
+}
